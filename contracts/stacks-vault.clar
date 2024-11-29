@@ -227,3 +227,20 @@
         (ok true)
     )
 )
+
+;; read only functions
+(define-read-only (get-protocol (protocol-id uint))
+    (map-get? protocols { protocol-id: protocol-id })
+)
+
+(define-read-only (get-user-deposit (user principal))
+    (map-get? user-deposits { user: user })
+)
+
+(define-read-only (get-total-tvl)
+    (var-get total-tvl)
+)
+
+(define-read-only (is-whitelisted (token <sip-010-trait>))
+    (default-to false (get approved (map-get? whitelisted-tokens { token: (contract-of token) })))
+)
