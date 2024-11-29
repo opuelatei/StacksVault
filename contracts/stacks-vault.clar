@@ -270,3 +270,29 @@
         (<= (len name) u64)
     )
 )
+
+(define-private (protocol-exists (protocol-id uint))
+    (is-some (map-get? protocols { protocol-id: protocol-id }))
+)
+
+(define-private (validate-token (token-trait <sip-010-trait>))
+    (let 
+        (
+            (token-contract (contract-of token-trait))
+            (token-info (map-get? whitelisted-tokens { token: token-contract }))
+        )
+        (asserts! (is-some token-info) err-token-not-whitelisted)
+        (asserts! (get approved (unwrap-panic token-info)) err-protocol-not-whitelisted)
+        (ok true)
+    )
+)
+
+(define-private (calculate-rewards (user principal) (blocks uint))
+    (let
+        (
+            (user-deposit (unwrap-panic (get-user-deposit user)))
+            (weighted-apy (get-weighted-apy))
+        )
+        (/ (* (get amount user-deposit) weighted-apy blocks) (* u10000 u144 u365))
+    )
+)
