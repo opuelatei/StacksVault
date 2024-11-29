@@ -202,3 +202,20 @@
         (ok rewards)
     )
 )
+
+(define-public (set-platform-fee (new-fee uint))
+    (begin
+        (asserts! (is-contract-owner) err-not-authorized)
+        (asserts! (<= new-fee u1000) err-invalid-amount)
+        (var-set platform-fee-rate new-fee)
+        (ok true)
+    )
+)
+
+(define-public (set-emergency-shutdown (shutdown bool))
+    (begin
+        (asserts! (is-contract-owner) err-not-authorized)
+        (var-set emergency-shutdown shutdown)
+        (ok true)
+    )
+)
