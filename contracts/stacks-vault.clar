@@ -296,3 +296,17 @@
         (/ (* (get amount user-deposit) weighted-apy blocks) (* u10000 u144 u365))
     )
 )
+
+(define-private (rebalance-protocols)
+    (let
+        (
+            (total-allocations (fold + (map get-protocol-allocation (get-protocol-list)) u0))
+        )
+        (asserts! (<= total-allocations u10000) err-invalid-amount)
+        (ok true)
+    )
+)
+
+(define-private (get-weighted-apy)
+    (fold + (map get-weighted-protocol-apy (get-protocol-list)) u0)
+)
