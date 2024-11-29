@@ -172,3 +172,33 @@
         (ok true)
     )
 )
+
+(define-public (claim-rewards (token-trait <sip-010-trait>))
+    (let
+        (
+            (user-principal tx-sender)
+            (rewards (calculate-rewards user-principal (- block-height 
+                (get last-deposit-block (unwrap-panic (get-user-deposit user-principal))))))
+        )
+        (try! (validate-token token-trait))
+        (asserts! (> rewards u0) err-invalid-amount)
+        
+        (map-set user-rewards
+            { user: user-principal }
+            {
+                pending: u0,
+                claimed: (+ rewards 
+                    (get claimed (default-to { pending: u0, claimed: u0 }
+                        (map-get? user-rewards { user: user-principal }))))
+            })
+        
+        (as-contract
+            (try! (contract-call? token-trait transfer
+                rewards
+                tx-sender
+                user-principal
+                none)))
+        
+        (ok rewards)
+    )
+)
