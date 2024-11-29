@@ -87,3 +87,18 @@
         (ok true)
     )
 )
+
+(define-public (update-protocol-status (protocol-id uint) (active bool))
+    (begin
+        (asserts! (is-contract-owner) err-not-authorized)
+        (asserts! (is-valid-protocol-id protocol-id) err-invalid-protocol-id)
+        (asserts! (protocol-exists protocol-id) err-invalid-protocol-id)
+        
+        (let ((protocol (unwrap-panic (get-protocol protocol-id))))
+            (map-set protocols { protocol-id: protocol-id }
+                (merge protocol { active: active })
+            )
+        )
+        (ok true)
+    )
+)
