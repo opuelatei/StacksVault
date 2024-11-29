@@ -244,3 +244,29 @@
 (define-read-only (is-whitelisted (token <sip-010-trait>))
     (default-to false (get approved (map-get? whitelisted-tokens { token: (contract-of token) })))
 )
+
+;; private functions
+(define-private (is-contract-owner)
+    (is-eq tx-sender contract-owner)
+)
+
+(define-private (is-valid-protocol-id (protocol-id uint))
+    (and 
+        (> protocol-id u0)
+        (<= protocol-id max-protocol-id)
+    )
+)
+
+(define-private (is-valid-apy (apy uint))
+    (and 
+        (>= apy min-apy)
+        (<= apy max-apy)
+    )
+)
+
+(define-private (is-valid-name (name (string-ascii 64)))
+    (and 
+        (not (is-eq name ""))
+        (<= (len name) u64)
+    )
+)
