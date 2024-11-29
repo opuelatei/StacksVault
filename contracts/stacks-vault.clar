@@ -14,3 +14,27 @@
     (get-token-uri () (response (optional (string-utf8 256)) uint))
   )
 )
+
+;; token definitions
+;;
+
+;; constants
+(define-constant contract-owner tx-sender)
+(define-constant err-not-authorized (err u1000))
+(define-constant err-invalid-amount (err u1001))
+(define-constant err-insufficient-balance (err u1002))
+(define-constant err-protocol-not-whitelisted (err u1003))
+(define-constant err-strategy-disabled (err u1004))
+(define-constant err-max-deposit-reached (err u1005))
+(define-constant err-min-deposit-not-met (err u1006))
+(define-constant err-invalid-protocol-id (err u1007))
+(define-constant err-protocol-exists (err u1008))
+(define-constant err-invalid-apy (err u1009))
+(define-constant err-invalid-name (err u1010))
+(define-constant err-invalid-token (err u1011))
+(define-constant err-token-not-whitelisted (err u1012))
+(define-constant protocol-active true)
+(define-constant protocol-inactive false)
+(define-constant max-protocol-id u100)
+(define-constant max-apy u10000) ;; 100% APY in basis points
+(define-constant min-apy u0)
