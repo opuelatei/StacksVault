@@ -66,3 +66,24 @@
 (define-map whitelisted-tokens 
     { token: principal } 
     { approved: bool })
+
+;; public functions
+(define-public (add-protocol (protocol-id uint) (name (string-ascii 64)) (initial-apy uint))
+    (begin
+        (asserts! (is-contract-owner) err-not-authorized)
+        (asserts! (is-valid-protocol-id protocol-id) err-invalid-protocol-id)
+        (asserts! (not (protocol-exists protocol-id)) err-protocol-exists)
+        (asserts! (is-valid-name name) err-invalid-name)
+        (asserts! (is-valid-apy initial-apy) err-invalid-apy)
+        
+        (map-set protocols { protocol-id: protocol-id }
+            { 
+                name: name,
+                active: protocol-active,
+                apy: initial-apy
+            }
+        )
+        (map-set strategy-allocations { protocol-id: protocol-id } { allocation: u0 })
+        (ok true)
+    )
+)
