@@ -310,3 +310,26 @@
 (define-private (get-weighted-apy)
     (fold + (map get-weighted-protocol-apy (get-protocol-list)) u0)
 )
+
+(define-private (get-weighted-protocol-apy (protocol-id uint))
+    (let
+        (
+            (protocol (unwrap-panic (get-protocol protocol-id)))
+            (allocation (get allocation (unwrap-panic 
+                (map-get? strategy-allocations { protocol-id: protocol-id }))))
+        )
+        (if (get active protocol)
+            (/ (* (get apy protocol) allocation) u10000)
+            u0
+        )
+    )
+)
+
+(define-private (get-protocol-list)
+    (list u1 u2 u3 u4 u5) ;; Supported protocol IDs
+)
+
+(define-private (get-protocol-allocation (protocol-id uint))
+    (get allocation (default-to { allocation: u0 }
+        (map-get? strategy-allocations { protocol-id: protocol-id })))
+)
