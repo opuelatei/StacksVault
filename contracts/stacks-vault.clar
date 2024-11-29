@@ -38,3 +38,10 @@
 (define-constant max-protocol-id u100)
 (define-constant max-apy u10000) ;; 100% APY in basis points
 (define-constant min-apy u0)
+
+;; data vars
+(define-data-var total-tvl uint u0)
+(define-data-var platform-fee-rate uint u100) ;; 1% (base 10000)
+(define-data-var min-deposit uint u100000) ;; Minimum deposit in sats
+(define-data-var max-deposit uint u1000000000) ;; Maximum deposit in sats
+(define-data-var emergency-shutdown bool false)
