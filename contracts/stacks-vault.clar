@@ -102,3 +102,19 @@
         (ok true)
     )
 )
+
+(define-public (update-protocol-apy (protocol-id uint) (new-apy uint))
+    (begin
+        (asserts! (is-contract-owner) err-not-authorized)
+        (asserts! (is-valid-protocol-id protocol-id) err-invalid-protocol-id)
+        (asserts! (protocol-exists protocol-id) err-invalid-protocol-id)
+        (asserts! (is-valid-apy new-apy) err-invalid-apy)
+        
+        (let ((protocol (unwrap-panic (get-protocol protocol-id))))
+            (map-set protocols { protocol-id: protocol-id }
+                (merge protocol { apy: new-apy })
+            )
+        )
+        (ok true)
+    )
+)
