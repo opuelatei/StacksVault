@@ -118,3 +118,31 @@
         (ok true)
     )
 )
+
+(define-public (deposit (token-trait <sip-010-trait>) (amount uint))
+    (let
+        (
+            (user-principal tx-sender)
+            (current-deposit (default-to { amount: u0, last-deposit-block: u0 } 
+                (map-get? user-deposits { user: user-principal })))
+        )
+        (try! (validate-token token-trait))
+        (asserts! (not (var-get emergency-shutdown)) err-strategy-disabled)
+        (asserts! (>= amount (var-get min-deposit)) err-min-deposit-not-met)
+        (asserts! (<= (+ amount (get amount current-deposit)) (var-get max-deposit)) err-max-deposit-reached)
+        
+        (try! (contract-call? token-trait transfer amount user-principal (as-contract tx-sender) none))
+        
+        (map-set user-deposits 
+            { user: user-principal }
+            { 
+                amount: (+ amount (get amount current-deposit)),
+                last-deposit-block: block-height
+            })
+        
+        (var-set total-tvl (+ (var-get total-tvl) amount))
+        
+        (try! (rebalance-protocols))
+        (ok true)
+    )
+)
