@@ -146,3 +146,29 @@
         (ok true)
     )
 )
+
+(define-public (withdraw (token-trait <sip-010-trait>) (amount uint))
+    (let
+        (
+            (user-principal tx-sender)
+            (current-deposit (default-to { amount: u0, last-deposit-block: u0 }
+                (map-get? user-deposits { user: user-principal })))
+        )
+        (try! (validate-token token-trait))
+        (asserts! (<= amount (get amount current-deposit)) err-insufficient-balance)
+        
+        (map-set user-deposits
+            { user: user-principal }
+            {
+                amount: (- (get amount current-deposit) amount),
+                last-deposit-block: (get last-deposit-block current-deposit)
+            })
+        
+        (var-set total-tvl (- (var-get total-tvl) amount))
+        
+        (as-contract
+            (try! (contract-call? token-trait transfer amount tx-sender user-principal none)))
+        
+        (ok true)
+    )
+)
